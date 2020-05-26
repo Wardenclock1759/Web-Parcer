@@ -11,7 +11,7 @@
     <div class="container-fluid">
         <div class="row justify-content-center">
             <div class="col-md-10">
-                <a href="/Publication/Index" class="col-form-label">
+                <a href="/Publications/Index" class="col-form-label">
                     <h3 class="text-center mt-2">Публикации</h3>
                     <hr />
                 </a>
@@ -102,10 +102,10 @@
                                 <td>
                                     <div class="row">
                                         <div class="col">
-                                            <button href="#" onclick="location.href='@Url.Action("Edit", "Publication", new {id = item.id})'" class="btn btn-warning btn-block btn-sm">Изменить</button>
+                                            <button href="#" onclick="location.href='@Url.Action("Edit", "Publications", new {id = item.id})'" class="btn btn-warning btn-block btn-sm">Изменить</button>
                                         </div>
                                         <div class="col">
-                                            <button href="#" onclick="location.href='@Url.Action("Delete", "Publication", new {id = item.id})'" class="btn btn-danger btn-block btn-sm">Удалить</button>
+                                            <button href="#" onclick="location.href='@Url.Action("Delete", "Publications", new {id = item.id})'" class="btn btn-danger btn-block btn-sm">Удалить</button>
                                         </div>
                                     </div>
                                 </td>
@@ -114,7 +114,7 @@
                     </tbody>
                 </table>
 
-                @Html.PagedListPager(Model, i => Url.Action("", "Publication/", new { i, searchText = Request.QueryString["searchText"] }))
+                @Html.PagedListPager(Model, i => Url.Action("", "Publications/", new { i, searchText = Request.QueryString["searchText"] }))
 
             </div>
         </div>

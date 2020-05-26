@@ -66,3 +66,8 @@ will truncate terms that are too long to fit in the left column
     vertical-align: middle;
     border-bottom: 2px solid rgba(0, 0, 0, 0.15);
 }
+
+td {
+    display: table-cell;
+    vertical-align: inherit;
+}
