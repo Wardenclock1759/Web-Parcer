@@ -48,6 +48,8 @@ namespace WebParser.Controllers
             string article_str = "";
             string chapter_str = "";
 
+            //var queryString
+
 
             if (cbArticle == "on" && cbChapter == "on")
             {
