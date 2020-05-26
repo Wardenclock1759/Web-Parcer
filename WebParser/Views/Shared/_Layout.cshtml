@@ -1,0 +1,51 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - SPL Systematizer</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+</head>
+
+<body>
+    <div class="container container-fluid">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+            <a class="navbar-brand">@Html.ActionLink("SPL Systematizer", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })</a>
+            <div class="dropdown">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="db" aria-haspopup="true" aria-expanded="false">
+                    Данные в базе
+                </button>
+                <ui class="dropdown-menu" aria-labelledby="listing">
+                    <a class="dropdown-item" href="/Author/Index">Авторы</a>
+                    <a class="dropdown-item" href="/Keywords/Index">Ключевые слова</a>
+                    <a class="dropdown-item" href="/Sources/Index">Источники</a>
+                    <a class="dropdown-item" href="/Publications/Index">Публикации</a>
+                </ui>
+            </div>
+            <div class="dropdown">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="db" aria-haspopup="true" aria-expanded="false">
+                    Действия с бд
+                </button>
+                <ui class="dropdown-menu" aria-labelledby="dbActions">
+                    <a class="dropdown-item" href="#">Загрузить файл</a>
+                    <a class="dropdown-item" href="#">Очистить бд</a>
+                </ui>
+            </div>
+            <a class="nav-link" href="/Queries/Index">Конструктор запросов</a>
+        </nav>
+
+    </div>
+    <div class="container body-content">
+        @RenderBody()
+        <hr />
+        <footer>
+            <p>&copy; @DateTime.Now.Year - SPL Systematizer</p>
+        </footer>
+    </div>
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+
+</body>
+</html>

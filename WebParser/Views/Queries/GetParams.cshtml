@@ -1,0 +1,30 @@
+﻿
+@{
+    ViewBag.Title = "QueryResultView";
+}
+
+<h2>QueryResultView</h2>
+<table class="table table-bordered table-striped table-dark">
+    <thead>
+        <tr>
+            @foreach (System.Data.DataColumn drc in ViewBag.QueryResult.Columns)
+            {
+                <th scope="col">
+                    @drc.ToString()
+                </th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (System.Data.DataRow drr in ViewBag.QueryResult.Rows)
+        {
+            <tr>
+                @foreach (var item in drr.ItemArray)
+                {
+                    <td>@item</td>
+                }
+            </tr>
+        }
+    </tbody>
+</table>
+

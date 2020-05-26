@@ -1,0 +1,126 @@
+﻿@model IPagedList<WebParser.keywords>
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+
+@using PagedList.Mvc;
+@using PagedList;
+
+<!DOCTYPE html>
+
+<html>
+<body>
+    <div class="container-fluid">
+        <div class="row justify-content-center">
+            <div class="col-md-10">
+                <a href="/Keywords/Index" class="col-form-label">
+                    <h3 class="text-center mt-2">Ключевые слова</h3>
+                    <hr />
+                </a>
+                @if (ViewData["messageType"] != null && ViewData["message"] != null)
+                {
+                    <div class="alert alert-@ViewData["messageType"] alert-dismissible text-center">
+                        <button type="button" class="close" data-dismiss="alert">&times;</button>
+                        <b>@ViewData["message"]</b>
+                    </div>
+                }
+
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+                @if (ViewData["Update"] != null && ViewData["Word"] != null)
+                {
+                    <h3 class="text-center text-info">
+                        Изменить ключевое слово
+                    </h3>
+                }
+                else
+                {
+                    <h3 class="text-center text-info">
+                        Добавить ключевое слово
+                    </h3>
+                }
+                <form action="" method="post" class="needs-validation" name="main" novalidate>
+                    <div class="form-group">
+                        <div class="form-group">
+                            <input type="text" name="keywordInput" class="form-control" placeholder="Введите слово" value="@ViewData["Word"]" maxlength="15" required />
+                            <div class="invalid-feedback">
+                                Введите слово не более, чем в 15 символов
+                            </div>
+                        </div>
+                        @if (ViewData["Update"] != null && ViewData["Word"] != null)
+                        {
+                            <input type="submit" name="editKeyword" class="btn btn-success btn-block" value="Изменить" formaction="@Url.Action("Update", "Keywords", new { keywordInput = Request.QueryString["keywordInput"], idInput = ViewData["Id"]})" />
+                        }
+                        else
+                        {
+                            <input type="submit" name="addKeyword" class="btn btn-primary btn-block" value="Добавить" formaction="Create" />
+                        }
+                    </div>
+                </form>
+                <form action="Index">
+                    <div class="form-group">
+                        <input class="form-control mr-lg-3" name="searchText" type="search" placeholder="Поиск по слову" aria-label="Search">
+                    </div>
+                    <div class="form-group">
+                        <button class="btn btn-warning btn-block" type="submit">Найти</button>
+                    </div>
+                </form>
+            </div>
+            <div class="col-md-8">
+                <h3 class="text-center text-info">Записи в базе данных</h3>
+                <table class="table table-hover table-dark table-bordered">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th class="text-center">
+                                <h3>Ключевое слово</h3>
+                            </th>
+                            <th class="text-center">
+                                <h3>Действия</h3>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <h5 class="text-center mt-2">@Html.DisplayFor(modelItem => item.keyword)</h5>
+                                </td>
+                                <td>
+                                    <div class="row">
+                                        <div class="col">
+                                            <button href="#" onclick="location.href='@Url.Action("Edit", "Keywords", new {id = item.id})'" class="btn btn-warning btn-block mt-2">Изменить</button>
+                                        </div>
+                                        <div class="col">
+                                            <button href="#" onclick="location.href='@Url.Action("Delete", "Keywords", new {id = item.id})'" class="btn btn-danger btn-block mt-2">Удалить</button>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+                @Html.PagedListPager(Model, i => Url.Action("", "Keywords/", new { i, searchText = Request.QueryString["searchText"] }))
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        var form = document.querySelector('.needs-validation');
+
+        form.addEventListener('submit', function (event) {
+
+            if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            form.classList.add('was-validated');
+        })
+    </script>
+
+
+</body>
+</html>

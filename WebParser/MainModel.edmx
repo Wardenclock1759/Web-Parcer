@@ -1,0 +1,414 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="u0979199_springer_dataModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="authors">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" Nullable="false" />
+          <Property Name="initials" Type="nvarchar" MaxLength="400" />
+        </EntityType>
+        <EntityType Name="keywords">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" Nullable="false" />
+          <Property Name="keyword" Type="nvarchar" MaxLength="400" />
+        </EntityType>
+        <EntityType Name="publications">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" Nullable="false" />
+          <Property Name="title" Type="nvarchar" MaxLength="400" />
+          <Property Name="year" Type="smallint" />
+        </EntityType>
+        <EntityType Name="publications_authors">
+          <Key>
+            <PropertyRef Name="author_id" />
+            <PropertyRef Name="publication_id" />
+          </Key>
+          <Property Name="author_id" Type="int" Nullable="false" />
+          <Property Name="publication_id" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="publications_keywords">
+          <Key>
+            <PropertyRef Name="publication_id" />
+            <PropertyRef Name="keyword_id" />
+          </Key>
+          <Property Name="publication_id" Type="int" Nullable="false" />
+          <Property Name="keyword_id" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="publications_sources">
+          <Key>
+            <PropertyRef Name="publication_id" />
+            <PropertyRef Name="source_id" />
+          </Key>
+          <Property Name="publication_id" Type="int" Nullable="false" />
+          <Property Name="source_id" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="publications_types">
+          <Key>
+            <PropertyRef Name="publication_id" />
+            <PropertyRef Name="type_id" />
+          </Key>
+          <Property Name="publication_id" Type="int" Nullable="false" />
+          <Property Name="type_id" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="sources">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" Nullable="false" />
+          <Property Name="item_title" Type="nvarchar" MaxLength="400" />
+          <Property Name="book_series_title" Type="nvarchar" MaxLength="400" />
+          <Property Name="journal_volume" Type="int" />
+          <Property Name="journal_issue" Type="int" />
+        </EntityType>
+        <EntityType Name="types">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" Nullable="false" />
+          <Property Name="type_name" Type="nvarchar" MaxLength="400" />
+        </EntityType>
+        <Association Name="FK__publicati__autho__77FFC2B3">
+          <End Role="authors" Type="Self.authors" Multiplicity="1" />
+          <End Role="publications_authors" Type="Self.publications_authors" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="authors">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="publications_authors">
+              <PropertyRef Name="author_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__publicati__keywo__7CC477D0">
+          <End Role="keywords" Type="Self.keywords" Multiplicity="1" />
+          <End Role="publications_keywords" Type="Self.publications_keywords" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="keywords">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="publications_keywords">
+              <PropertyRef Name="keyword_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__publicati__publi__0371755F">
+          <End Role="publications" Type="Self.publications" Multiplicity="1" />
+          <End Role="publications_types" Type="Self.publications_types" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="publications">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="publications_types">
+              <PropertyRef Name="publication_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__publicati__publi__78F3E6EC">
+          <End Role="publications" Type="Self.publications" Multiplicity="1" />
+          <End Role="publications_authors" Type="Self.publications_authors" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="publications">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="publications_authors">
+              <PropertyRef Name="publication_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__publicati__publi__7BD05397">
+          <End Role="publications" Type="Self.publications" Multiplicity="1" />
+          <End Role="publications_keywords" Type="Self.publications_keywords" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="publications">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="publications_keywords">
+              <PropertyRef Name="publication_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__publicati__publi__7FA0E47B">
+          <End Role="publications" Type="Self.publications" Multiplicity="1" />
+          <End Role="publications_sources" Type="Self.publications_sources" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="publications">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="publications_sources">
+              <PropertyRef Name="publication_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__publicati__sourc__009508B4">
+          <End Role="sources" Type="Self.sources" Multiplicity="1" />
+          <End Role="publications_sources" Type="Self.publications_sources" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="sources">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="publications_sources">
+              <PropertyRef Name="source_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__publicati__type___04659998">
+          <End Role="types" Type="Self.types" Multiplicity="1" />
+          <End Role="publications_types" Type="Self.publications_types" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="types">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="publications_types">
+              <PropertyRef Name="type_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="u0979199_springer_dataModelStoreContainer">
+          <EntitySet Name="authors" EntityType="Self.authors" Schema="u0979199_spender" store:Type="Tables" />
+          <EntitySet Name="keywords" EntityType="Self.keywords" Schema="u0979199_spender" store:Type="Tables" />
+          <EntitySet Name="publications" EntityType="Self.publications" Schema="u0979199_spender" store:Type="Tables" />
+          <EntitySet Name="publications_authors" EntityType="Self.publications_authors" Schema="u0979199_spender" store:Type="Tables" />
+          <EntitySet Name="publications_keywords" EntityType="Self.publications_keywords" Schema="u0979199_spender" store:Type="Tables" />
+          <EntitySet Name="publications_sources" EntityType="Self.publications_sources" Schema="u0979199_spender" store:Type="Tables" />
+          <EntitySet Name="publications_types" EntityType="Self.publications_types" Schema="u0979199_spender" store:Type="Tables" />
+          <EntitySet Name="sources" EntityType="Self.sources" Schema="u0979199_spender" store:Type="Tables" />
+          <EntitySet Name="types" EntityType="Self.types" Schema="u0979199_spender" store:Type="Tables" />
+          <AssociationSet Name="FK__publicati__autho__77FFC2B3" Association="Self.FK__publicati__autho__77FFC2B3">
+            <End Role="authors" EntitySet="authors" />
+            <End Role="publications_authors" EntitySet="publications_authors" />
+          </AssociationSet>
+          <AssociationSet Name="FK__publicati__keywo__7CC477D0" Association="Self.FK__publicati__keywo__7CC477D0">
+            <End Role="keywords" EntitySet="keywords" />
+            <End Role="publications_keywords" EntitySet="publications_keywords" />
+          </AssociationSet>
+          <AssociationSet Name="FK__publicati__publi__0371755F" Association="Self.FK__publicati__publi__0371755F">
+            <End Role="publications" EntitySet="publications" />
+            <End Role="publications_types" EntitySet="publications_types" />
+          </AssociationSet>
+          <AssociationSet Name="FK__publicati__publi__78F3E6EC" Association="Self.FK__publicati__publi__78F3E6EC">
+            <End Role="publications" EntitySet="publications" />
+            <End Role="publications_authors" EntitySet="publications_authors" />
+          </AssociationSet>
+          <AssociationSet Name="FK__publicati__publi__7BD05397" Association="Self.FK__publicati__publi__7BD05397">
+            <End Role="publications" EntitySet="publications" />
+            <End Role="publications_keywords" EntitySet="publications_keywords" />
+          </AssociationSet>
+          <AssociationSet Name="FK__publicati__publi__7FA0E47B" Association="Self.FK__publicati__publi__7FA0E47B">
+            <End Role="publications" EntitySet="publications" />
+            <End Role="publications_sources" EntitySet="publications_sources" />
+          </AssociationSet>
+          <AssociationSet Name="FK__publicati__sourc__009508B4" Association="Self.FK__publicati__sourc__009508B4">
+            <End Role="sources" EntitySet="sources" />
+            <End Role="publications_sources" EntitySet="publications_sources" />
+          </AssociationSet>
+          <AssociationSet Name="FK__publicati__type___04659998" Association="Self.FK__publicati__type___04659998">
+            <End Role="types" EntitySet="types" />
+            <End Role="publications_types" EntitySet="publications_types" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="u0979199_springer_dataModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="authors">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" />
+          <Property Name="initials" Type="String" MaxLength="400" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="publications" Relationship="Self.publications_authors" FromRole="authors" ToRole="publications" />
+        </EntityType>
+        <EntityType Name="keywords">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" />
+          <Property Name="keyword" Type="String" MaxLength="400" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="publications" Relationship="Self.publications_keywords" FromRole="keywords" ToRole="publications" />
+        </EntityType>
+        <EntityType Name="publications">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" />
+          <Property Name="title" Type="String" MaxLength="400" FixedLength="false" Unicode="true" />
+          <Property Name="year" Type="Int16" />
+          <NavigationProperty Name="authors" Relationship="Self.publications_authors" FromRole="publications" ToRole="authors" />
+          <NavigationProperty Name="keywords" Relationship="Self.publications_keywords" FromRole="publications" ToRole="keywords" />
+          <NavigationProperty Name="sources" Relationship="Self.publications_sources" FromRole="publications" ToRole="sources" />
+          <NavigationProperty Name="types" Relationship="Self.publications_types" FromRole="publications" ToRole="types" />
+        </EntityType>
+        <EntityType Name="sources">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" />
+          <Property Name="item_title" Type="String" MaxLength="400" FixedLength="false" Unicode="true" />
+          <Property Name="book_series_title" Type="String" MaxLength="400" FixedLength="false" Unicode="true" />
+          <Property Name="journal_volume" Type="Int32" />
+          <Property Name="journal_issue" Type="Int32" />
+          <NavigationProperty Name="publications" Relationship="Self.publications_sources" FromRole="sources" ToRole="publications" />
+        </EntityType>
+        <EntityType Name="types">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" />
+          <Property Name="type_name" Type="String" MaxLength="400" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="publications" Relationship="Self.publications_types" FromRole="types" ToRole="publications" />
+        </EntityType>
+        <Association Name="publications_authors">
+          <End Role="authors" Type="Self.authors" Multiplicity="*" />
+          <End Role="publications" Type="Self.publications" Multiplicity="*" />
+        </Association>
+        <Association Name="publications_keywords">
+          <End Role="keywords" Type="Self.keywords" Multiplicity="*" />
+          <End Role="publications" Type="Self.publications" Multiplicity="*" />
+        </Association>
+        <Association Name="publications_sources">
+          <End Role="publications" Type="Self.publications" Multiplicity="*" />
+          <End Role="sources" Type="Self.sources" Multiplicity="*" />
+        </Association>
+        <Association Name="publications_types">
+          <End Role="publications" Type="Self.publications" Multiplicity="*" />
+          <End Role="types" Type="Self.types" Multiplicity="*" />
+        </Association>
+        <EntityContainer Name="u0979199_springer_dataEntities1" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="authors" EntityType="Self.authors" />
+          <EntitySet Name="keywords" EntityType="Self.keywords" />
+          <EntitySet Name="publications" EntityType="Self.publications" />
+          <EntitySet Name="sources" EntityType="Self.sources" />
+          <EntitySet Name="types" EntityType="Self.types" />
+          <AssociationSet Name="publications_authors" Association="Self.publications_authors">
+            <End Role="authors" EntitySet="authors" />
+            <End Role="publications" EntitySet="publications" />
+          </AssociationSet>
+          <AssociationSet Name="publications_keywords" Association="Self.publications_keywords">
+            <End Role="keywords" EntitySet="keywords" />
+            <End Role="publications" EntitySet="publications" />
+          </AssociationSet>
+          <AssociationSet Name="publications_sources" Association="Self.publications_sources">
+            <End Role="publications" EntitySet="publications" />
+            <End Role="sources" EntitySet="sources" />
+          </AssociationSet>
+          <AssociationSet Name="publications_types" Association="Self.publications_types">
+            <End Role="publications" EntitySet="publications" />
+            <End Role="types" EntitySet="types" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="u0979199_springer_dataModelStoreContainer" CdmEntityContainer="u0979199_springer_dataEntities1">
+          <EntitySetMapping Name="authors">
+            <EntityTypeMapping TypeName="u0979199_springer_dataModel.authors">
+              <MappingFragment StoreEntitySet="authors">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="initials" ColumnName="initials" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="keywords">
+            <EntityTypeMapping TypeName="u0979199_springer_dataModel.keywords">
+              <MappingFragment StoreEntitySet="keywords">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="keyword" ColumnName="keyword" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="publications">
+            <EntityTypeMapping TypeName="u0979199_springer_dataModel.publications">
+              <MappingFragment StoreEntitySet="publications">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="title" ColumnName="title" />
+                <ScalarProperty Name="year" ColumnName="year" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="sources">
+            <EntityTypeMapping TypeName="u0979199_springer_dataModel.sources">
+              <MappingFragment StoreEntitySet="sources">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="item_title" ColumnName="item_title" />
+                <ScalarProperty Name="book_series_title" ColumnName="book_series_title" />
+                <ScalarProperty Name="journal_volume" ColumnName="journal_volume" />
+                <ScalarProperty Name="journal_issue" ColumnName="journal_issue" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="types">
+            <EntityTypeMapping TypeName="u0979199_springer_dataModel.types">
+              <MappingFragment StoreEntitySet="types">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="type_name" ColumnName="type_name" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <AssociationSetMapping Name="publications_authors" TypeName="u0979199_springer_dataModel.publications_authors" StoreEntitySet="publications_authors">
+            <EndProperty Name="authors">
+              <ScalarProperty Name="id" ColumnName="author_id" />
+            </EndProperty>
+            <EndProperty Name="publications">
+              <ScalarProperty Name="id" ColumnName="publication_id" />
+            </EndProperty>
+          </AssociationSetMapping>
+          <AssociationSetMapping Name="publications_keywords" TypeName="u0979199_springer_dataModel.publications_keywords" StoreEntitySet="publications_keywords">
+            <EndProperty Name="keywords">
+              <ScalarProperty Name="id" ColumnName="keyword_id" />
+            </EndProperty>
+            <EndProperty Name="publications">
+              <ScalarProperty Name="id" ColumnName="publication_id" />
+            </EndProperty>
+          </AssociationSetMapping>
+          <AssociationSetMapping Name="publications_sources" TypeName="u0979199_springer_dataModel.publications_sources" StoreEntitySet="publications_sources">
+            <EndProperty Name="publications">
+              <ScalarProperty Name="id" ColumnName="publication_id" />
+            </EndProperty>
+            <EndProperty Name="sources">
+              <ScalarProperty Name="id" ColumnName="source_id" />
+            </EndProperty>
+          </AssociationSetMapping>
+          <AssociationSetMapping Name="publications_types" TypeName="u0979199_springer_dataModel.publications_types" StoreEntitySet="publications_types">
+            <EndProperty Name="publications">
+              <ScalarProperty Name="id" ColumnName="publication_id" />
+            </EndProperty>
+            <EndProperty Name="types">
+              <ScalarProperty Name="id" ColumnName="type_id" />
+            </EndProperty>
+          </AssociationSetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="false" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

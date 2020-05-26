@@ -1,0 +1,150 @@
+﻿@model IPagedList<WebParser.sources>
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+
+@using PagedList.Mvc;
+@using PagedList;
+
+<!DOCTYPE html>
+
+<html>
+<body>
+    <div class="container-fluid">
+        <div class="row justify-content-center">
+            <div class="col-md-10">
+                <a href="/Sources/Index" class="col-form-label">
+                    <h3 class="text-center mt-2">Источники</h3>
+                    <hr />
+                </a>
+                @if (ViewData["messageType"] != null && ViewData["message"] != null)
+                {
+                    <div class="alert alert-@ViewData["messageType"] alert-dismissible text-center">
+                        <button type="button" class="close" data-dismiss="alert">&times;</button>
+                        <b>@ViewData["message"]</b>
+                    </div>
+                }
+
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+                @if (ViewData["Update"] != null && ViewData["Title"] != null)
+                {
+                    <h3 class="text-center text-info">
+                        Изменить Источник
+                    </h3>
+                }
+                else
+                {
+                    <h3 class="text-center text-info">
+                        Добавить Источник
+                    </h3>
+                }
+                <form action="" method="post" class="needs-validation" name="main" novalidate>
+                    <div class="form-group">
+                        <div class="form-group">
+                            <input type="text" name="titleInput" class="form-control" placeholder="Заголовок" value="@ViewData["Title"]" maxlength="200" required />
+                            <div class="invalid-feedback">
+                                Менее 200 символов
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <input type="number" name="volumeInput" class="form-control" placeholder="Номер серии" value="@ViewData["Volume"]" min="0" max="9999" maxlength="4" required />
+                            <div class="invalid-feedback">
+                                Введите значение от 0 до 9999
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <input type="number" name="issueInput" class="form-control" placeholder="Номер выпуска" value="@ViewData["Issue"]" min="0" max="9999" maxlength="4" required />
+                            <div class="invalid-feedback">
+                                Введите значение от 0 до 9999
+                            </div>
+                        </div>
+                        @if (ViewData["Update"] != null && ViewData["Title"] != null)
+                        {
+                            <input type="submit" name="editSource" class="btn btn-success btn-block" value="Изменить" formaction="@Url.Action("Update", "Sources", new { sourceInput = Request.QueryString["titleInput"], idInput = ViewData["Id"], issue = Request.QueryString["issueInput"], volume = Request.QueryString["volumeInput"]})" />
+                        }
+                        else
+                        {
+                            <input type="submit" name="addSource" class="btn btn-primary btn-block" value="Добавить" formaction="Create" />
+                        }
+                    </div>
+                </form>
+                <form action="Index">
+                    <div class="form-group">
+                        <input class="form-control mr-lg-3" name="searchText" type="search" placeholder="Поиск по заголовку" aria-label="Search">
+                    </div>
+                    <div class="form-group">
+                        <button class="btn btn-warning btn-block" type="submit">Найти</button>
+                    </div>
+                </form>
+            </div>
+            <div class="col-md-8">
+                <h3 class="text-center text-info">Записи в базе данных</h3>
+                <table class="table table-hover table-dark table-bordered">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th class="text-center">
+                                <h4>Заголовок</h4>
+                            </th>
+                            <th class="text-center">
+                                <h4>Номер серии</h4>
+                            </th>
+                            <th class="text-center">
+                                <h4>Номер выпуска</h4>
+                            </th>
+                            <th class="text-center">
+                                <h4>Действия</h4>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <h6 class="text-center mt-2">@Html.DisplayFor(modelItem => item.item_title)</h6>
+                                </td>
+                                <td>
+                                    <h6 class="text-center mt-2">@Html.DisplayFor(modelItem => item.journal_volume)</h6>
+                                </td>
+                                <td>
+                                    <h6 class="text-center mt-2">@Html.DisplayFor(modelItem => item.journal_issue)</h6>
+                                </td>
+                                <td>
+                                    <div class="row">
+                                        <div class="col">
+                                            <button href="#" onclick="location.href='@Url.Action("Edit", "Sources", new {id = item.id})'" class="btn btn-warning btn-sm">Изменить</button>
+                                        </div>
+                                        <div class="col">
+                                            <button href="#" onclick="location.href='@Url.Action("Delete", "Sources", new {id = item.id})'" class="btn btn-danger btn-sm">Удалить</button>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+                @Html.PagedListPager(Model, i => Url.Action("", "Sources/", new { i, searchText = Request.QueryString["searchText"] }))
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        var form = document.querySelector('.needs-validation');
+
+        form.addEventListener('submit', function (event) {
+
+            if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            form.classList.add('was-validated');
+        })
+    </script>
+
+
+</body>
+</html>
