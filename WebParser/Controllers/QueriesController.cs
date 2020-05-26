@@ -5,6 +5,8 @@ using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Reflection;
+using System.Security.Cryptography;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.UI.WebControls;
@@ -16,7 +18,6 @@ namespace WebParser.Controllers
         private SqlConnection connection;
         private System.Data.DataTable dataTable = new DataTable();
         u0979199_springer_dataEntities1 db = new u0979199_springer_dataEntities1();
-        private SqlDataAdapter dataAdapter;
 
         private void EstablishConnection()
         {
@@ -43,128 +44,75 @@ namespace WebParser.Controllers
 
         private DataTable GenerateQuery(string cbYear, string tbMinYear, string tbMaxYear, string cbSource, string tbSource, string cbAuthorsNumber, string num, string cbKeywords, string tbKeywords, string cbChapter, string cbArticle, string cbUnique)
         {
-            string query = "";
-            string comma_str = "";
-            string article_str = "";
-            string chapter_str = "";
-
-            //var queryString
-
-
-            if (cbArticle == "on" && cbChapter == "on")
+            DataTable result = new DataTable();
+            int min_year = 0;
+            int max_year = 0;
+            if (cbYear == "on" && CheckYear(tbMinYear, tbMaxYear))
             {
-                comma_str = ", ";
-                chapter_str = "'Chapter','ConferencePaper','ReferenceWorkEntry'";
-                article_str = "'Article'";
+                min_year = int.Parse(tbMinYear);
+                max_year = int.Parse(tbMaxYear);
             }
-            else if (cbArticle == "on")
+            
+            if (cbSource == "on" && tbSource != "")
             {
-                comma_str = "";
-                article_str = "'Article'";
-                chapter_str = "";
-            }
-            else if (cbChapter == "on")
-            {
-                comma_str = "";
-                article_str = "";
-                chapter_str = "'Chapter', 'ConferencePaper', 'ReferenceWorkEntry'";
-            }
-            else
-            {
-                comma_str = ", ";
-                chapter_str = "'Chapter', 'ConferencePaper', 'ReferenceWorkEntry'";
-                article_str = "'Article'";
+                if (cbArticle == "on" && cbChapter == "on")
+                {
+                    var q_sourceBoth = from publications in db.publications
+                                       where publications.year >= min_year && publications.year <= max_year && publications.sources.Where(x => x.item_title.StartsWith(tbSource)).Count() != 0 && publications.types.Where(x => x.id == 2).Count() != 0 && publications.types.Where(x => x.id == 1).Count() != 0
+                                       select publications.id;
+                }
+                else if (cbArticle == "on")
+                {
+                    var q_sourceArticle = from publications in db.publications
+                                          where publications.year >= min_year && publications.year <= max_year && publications.sources.Where(x => x.item_title.StartsWith(tbSource)).Count() != 0 && publications.types.Where(x => x.id == 1).Count() != 0
+                                          select publications.id;
+                }
+                else if (cbChapter == "on")
+                {
+                    var q_sourceChapter = from publications in db.publications
+                                          where publications.year >= min_year && publications.year <= max_year && publications.sources.Where(x => x.item_title.StartsWith(tbSource)).Count() != 0 && publications.types.Where(x => x.id == 2).Count() != 0
+                                          select publications.id;
+                }
             }
 
 
             if (cbYear == "on" && CheckYear(tbMinYear, tbMaxYear))
             {
-                int min_year = int.Parse(tbMinYear);
-                int max_year = int.Parse(tbMaxYear);
+                var q_year = from publications in db.publications
+                        where publications.year >= min_year && publications.year <= max_year
+                        select new { Title = publications.title};
 
-                query = "select " +
-                    "distinct year as 'Год издания', " +
-                    "count(*) over (partition by year) as 'Количество' " +
-                    "from publications " +
-                    $"where year between {min_year} and {max_year}";
+                result = LINQResultToDataTable(q_year);
 
-                if (cbSource == "on" && tbSource != "")
-                {
-                    query = "select distinct year as 'Год издания', count(*) over (partition by year) as 'Количество' " +
-                "from publications " +
-                "where " +
-                $"year between {min_year} and {max_year} " +
-                "and id in ( " +
-                "select publication_id " +
-                "from publications_sources " +
-                "where source_id in ( " +
-                "select id from sources " +
-                $"where item_title like '%{tbSource}%') " +
-                "intersect " +
-                "select publication_id " +
-                "from publications_types " +
-                "where " +
-                "type_id in ( " +
-                "select id " +
-                "from types " +
-                $"where type_name in ({article_str}{comma_str}{chapter_str})))";
-
-                }
                 if (cbAuthorsNumber == "on" && Int32.TryParse(num, out int numAuthor))
                 {
-                    query = "select distinct year as 'Год издания', count(*) over (partition by year) as 'Количество'  " +
-                        " from publications " +
-                        "where " +
-                        $"year between {min_year} and {max_year} " +
-                        "and id in ( " +
-                        "select publication_id " +
-                        "from publications_authors " +
-                        "group by publication_id " +
-                        $"having count(author_id) = {numAuthor}); ";
+
+                    var queryAuthorNumber = from publications in db.publications
+                                      where publications.authors.Count() == numAuthor && publications.year >= min_year && publications.year <= max_year
+                                      select publications.id;
+
                 }
-                dataAdapter = new SqlDataAdapter(query, connection);
-                dataAdapter.Fill(dataTable);
-                return dataTable;
+                return result;
             }
             if (cbKeywords == "on" && tbKeywords != "")
             {
-                SqlDataAdapter sqlAd;
-                dataTable = new System.Data.DataTable();
-                string[] keywords = GetKeywords(tbKeywords);
-                foreach (string el in keywords)
-                {
-                    query = "select distinct k.keyword as 'Ключевое слово', " +
-                    "count(*) over (partition by p_k.keyword_id) as 'Количество' " +
-                    "from publications_keywords p_k " +
-                    "join keywords k " +
-                    "on k.id = p_k.keyword_id " +
-                    $"where lower(k.keyword) in ('{el}'); ";
-
-                    sqlAd = new SqlDataAdapter(query, connection);
-                    sqlAd.Fill(dataTable);
-                }
-
-                return dataTable;
+                List<int> keywords = GetKeywords(tbKeywords);
+                var queryAuthorNumber = from pub in db.publications
+                                        from w in pub.keywords
+                                        where keywords.Contains(w.id)
+                                        group w by w.keyword into c
+                                        select new { name = c.Key, count = c.Count(), pubId = from p in c select p.id};
+                result = LINQResultToDataTable(queryAuthorNumber);
+                return result;
             }
             if (cbUnique == "on")
             {
-                query = "select distinct p.title as 'Публикация', a.initials as 'Автор', s.item_title as 'Источник', p.year as 'Год издания', s.journal_issue as 'Номер журнала'" +
-                    "from publications p " +
-                    "join publications_authors p_a " +
-                    "on p.id = p_a.publication_id " +
-                    "join authors a " +
-                    "on a.id = p_a.author_id " +
-                    "join publications_sources p_s " +
-                    "on p.id = p_s.publication_id " +
-                    "join sources s " +
-                    "on p_s.source_id = s.id ";
 
-                dataAdapter = new SqlDataAdapter(query, connection);
-                dataAdapter.Fill(dataTable);
-                return dataTable;
+                var queryUnique = from pub in db.publications
+                                  where pub.authors.Count != 0 && pub.sources.Count != 0
+                                  select pub.id;
+
             }
-
-
             return null;
 
         }
@@ -176,15 +124,66 @@ namespace WebParser.Controllers
             return (Int32.TryParse(n1, out num1) && Int32.TryParse(n2, out num2));
         }
 
-        private string[] GetKeywords(string input)
+        private List<int> GetKeywords(string input)
         {
             char[] delimiter = { ',' };
             string[] keywords = input.Split(delimiter, StringSplitOptions.RemoveEmptyEntries);
+            List<int> keys = new List<int>();
             for (int i = 0; i < keywords.Length; i++)
             {
                 keywords[i] = keywords[i].ToLower().Replace(" ", "");
             }
-            return keywords;
+            foreach (string word in keywords)
+            {
+                keywords w = db.keywords.Where(x => x.keyword == word).FirstOrDefault();
+                if (w != null)
+                {
+                    keys.Add(w.id);
+                }
+            }
+            return keys;
+        }
+
+        public DataTable LINQResultToDataTable<T>(IEnumerable<T> Linqlist)
+        {
+            DataTable dt = new DataTable();
+
+            PropertyInfo[] columns = null;
+
+            if (Linqlist == null) return dt;
+
+            foreach (T Record in Linqlist)
+            {
+
+                if (columns == null)
+                {
+                    columns = Record.GetType().GetProperties();
+                    foreach (PropertyInfo GetProperty in columns)
+                    {
+                        Type colType = GetProperty.PropertyType;
+
+                        if ((colType.IsGenericType) && (colType.GetGenericTypeDefinition()
+                        == typeof(Nullable<>)))
+                        {
+                            colType = colType.GetGenericArguments()[0];
+                        }
+
+                        dt.Columns.Add(new DataColumn(GetProperty.Name, colType));
+                    }
+                }
+
+                DataRow dr = dt.NewRow();
+
+                foreach (PropertyInfo pinfo in columns)
+                {
+                    dr[pinfo.Name] = pinfo.GetValue(Record, null) == null ? DBNull.Value : pinfo.GetValue
+                    (Record, null);
+                }
+
+                dt.Rows.Add(dr);
+            }
+            return dt;
         }
     }
+
 }
