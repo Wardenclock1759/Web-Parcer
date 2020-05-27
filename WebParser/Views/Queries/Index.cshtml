@@ -8,10 +8,7 @@
     <form action="GetParams" method="post" class="needs-validation" novalidate>
         <div class="form-row">
             <div class="form-group col-md-3">
-                <div class="form-check form-inline">
-                    <input type="checkbox" class="form-check-input" name="yearCheck">
-                    <label class="form-check-label" for="yearCheck">Год выпуска:</label>
-                </div>
+                <label><input type="checkbox" class="form-check-input" name="yearCheck">Год выпуска:</label>
             </div>
             <div class="form-group col-md-4">
                 <input type="number" class="form-control" name="minYear" min="1900" max="2020" maxlength="4" placeholder="Начало периода">
@@ -29,10 +26,7 @@
 
         <div class="form-row input-group-lg">
             <div class="form-group col-md-3">
-                <div class="form-check form-inline">
-                    <input type="checkbox" class="form-check-input" name="sourceCheck">
-                    <label class="form-check-label" for="sourceCheck">Название источника:</label>
-                </div>
+                <label><input type="checkbox" class="form-check-input" name="sourceCheck">Название источника:</label>
             </div>
             <div class="form-group col-md-4">
                 <input type="text" class="form-control" name="source" maxlength="50" placeholder="Введите название источника">
@@ -44,10 +38,7 @@
 
         <div class="form-row">
             <div class="form-group col-md-3">
-                <div class="form-check form-inline">
-                    <input type="checkbox" class="form-check-input" name="numCheck">
-                    <label class="form-check-label" for="numCheck">Количество авторов:</label>
-                </div>
+                <label><input type="checkbox" class="form-check-input" name="numCheck">Количество авторов:</label>
             </div>
             <div class="form-group col-md-4">
                 <input type="number" class="form-control" name="num" min="1" max="20" placeholder="Введите количество авторов">
@@ -59,10 +50,7 @@
 
         <div class="form-row">
             <div class="form-group col-md-3">
-                <div class="form-check form-inline">
-                    <input type="checkbox" class="form-check-input" name="wordCheck">
-                    <label class="form-check-label" for="wordCheck">Ключевые слова:</label>
-                </div>
+                <label><input type="checkbox" class="form-check-input" name="wordCheck">Ключевые слова:</label>
             </div>
             <div class="form-group col-md-4">
                 <input type="text" class="form-control" name="word" maxlength="50" placeholder="Введите слова через ,">
@@ -74,18 +62,9 @@
 
         <div class="form-row">
             <div class="form-group col-md-3">
-                <div class="form-check form-inline">
-                    <input type="checkbox" class="form-check-input" name="chapterCheck">
-                    <label class="form-check-label" for="chapterCheck">Конференция</label>
-                </div>
-                <div class="form-check form-inline">
-                    <input type="checkbox" class="form-check-input" name="articleCheck">
-                    <label class="form-check-label" for="articleCheck">Журнал</label>
-                </div>
-                <div class="form-check form-inline">
-                    <input type="checkbox" class="form-check-input" name="uniqueCheck">
-                    <label class="form-check-label" for="uniqueCheck">Уникальные</label>
-                </div>
+                <label><input type="checkbox" class="form-check-input" name="chapterCheck">Конференция</label>
+                <label><input type="checkbox" class="form-check-input" name="articleCheck">Журнал</label>
+                <label><input type="checkbox" class="form-check-input" name="uniqueCheck">Уникальные</label>
             </div>
         </div>
 
