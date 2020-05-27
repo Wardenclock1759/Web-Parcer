@@ -52,26 +52,40 @@ namespace WebParser.Controllers
                 min_year = int.Parse(tbMinYear);
                 max_year = int.Parse(tbMaxYear);
             }
-            
+
             if (cbSource == "on" && tbSource != "")
             {
+                tbSource = tbSource.ToLower();
                 if (cbArticle == "on" && cbChapter == "on")
                 {
-                    var q_sourceBoth = from publications in db.publications
-                                       where publications.year >= min_year && publications.year <= max_year && publications.sources.Where(x => x.item_title.StartsWith(tbSource)).Count() != 0 && publications.types.Where(x => x.id == 2).Count() != 0 && publications.types.Where(x => x.id == 1).Count() != 0
-                                       select publications.id;
+                    var q_sourceBoth = from s in db.sources
+                                       from publications in s.publications
+                                       let lower = s.item_title.ToLower()
+                                       where publications.year >= min_year && publications.year <= max_year && publications.types.Where(x => x.id == 2).Count() != 0 && publications.types.Where(x => x.id == 1).Count() != 0 && lower.Contains(tbSource)
+                                       select new { Source_Title = s.item_title, Publication_Title = publications.title };
+                    result = LINQResultToDataTable(q_sourceBoth);
+                    return result;
                 }
                 else if (cbArticle == "on")
                 {
-                    var q_sourceArticle = from publications in db.publications
-                                          where publications.year >= min_year && publications.year <= max_year && publications.sources.Where(x => x.item_title.StartsWith(tbSource)).Count() != 0 && publications.types.Where(x => x.id == 1).Count() != 0
-                                          select publications.id;
+                    var q_sourceArticle = from s in db.sources
+                                          from publications in s.publications
+                                          let lower = s.item_title.ToLower()
+                                          where publications.year >= min_year && publications.year <= max_year && publications.types.Where(x => x.id == 1).Count() != 0 && lower.Contains(tbSource)
+                                          select new { Source_Title = s.item_title, Publication_Title = publications.title };
+                    result = LINQResultToDataTable(q_sourceArticle);
+                    return result;
                 }
                 else if (cbChapter == "on")
                 {
-                    var q_sourceChapter = from publications in db.publications
-                                          where publications.year >= min_year && publications.year <= max_year && publications.sources.Where(x => x.item_title.StartsWith(tbSource)).Count() != 0 && publications.types.Where(x => x.id == 2).Count() != 0
-                                          select publications.id;
+                    var q_sourceChapter = from s in db.sources
+                                          from publications in s.publications
+                                          let lower = s.item_title.ToLower()
+                                          where publications.year >= min_year && publications.year <= max_year && publications.types.Where(x => x.id == 2).Count() != 0 && lower.Contains(tbSource)
+                                          select new { Source_Title = s.item_title, Publication_Title = publications.title };
+
+                    result = LINQResultToDataTable(q_sourceChapter);
+                    return result;
                 }
             }
 
@@ -79,30 +93,48 @@ namespace WebParser.Controllers
             if (cbYear == "on" && CheckYear(tbMinYear, tbMaxYear))
             {
                 var q_year = from publications in db.publications
-                        where publications.year >= min_year && publications.year <= max_year
-                        select new { Title = publications.title};
+                             where publications.year >= min_year && publications.year <= max_year
+                             select new { Title = publications.title, Year = publications.year };
 
                 result = LINQResultToDataTable(q_year);
 
                 if (cbAuthorsNumber == "on" && Int32.TryParse(num, out int numAuthor))
                 {
-
                     var queryAuthorNumber = from publications in db.publications
-                                      where publications.authors.Count() == numAuthor && publications.year >= min_year && publications.year <= max_year
-                                      select publications.id;
-
+                                            where publications.authors.Count() == numAuthor && publications.year >= min_year && publications.year <= max_year
+                                            select new
+                                            {
+                                                Title = publications.title,
+                                                Year = publications.year,
+                                                Authors = from pub in db.publications
+                                                          from au in pub.authors
+                                                          where pub.id == publications.id && pub.authors.Count() == numAuthor
+                                                          select au.initials
+                                            };
+                    result = LINQResultToDataTable(queryAuthorNumber);
                 }
                 return result;
             }
             if (cbKeywords == "on" && tbKeywords != "")
             {
                 List<int> keywords = GetKeywords(tbKeywords);
+
                 var queryAuthorNumber = from pub in db.publications
                                         from w in pub.keywords
                                         where keywords.Contains(w.id)
                                         group w by w.keyword into c
-                                        select new { name = c.Key, count = c.Count(), pubId = from p in c select p.id};
+                                        select new
+                                        {
+                                            Word = c.Key,
+                                            Count = c.Count(),
+                                            Titles = from pub in db.publications
+                                                     from w in pub.keywords
+                                                     where w.keyword == c.Key
+                                                     select pub.title
+                                        };
+
                 result = LINQResultToDataTable(queryAuthorNumber);
+
                 return result;
             }
             if (cbUnique == "on")
@@ -110,8 +142,22 @@ namespace WebParser.Controllers
 
                 var queryUnique = from pub in db.publications
                                   where pub.authors.Count != 0 && pub.sources.Count != 0
-                                  select pub.id;
+                                  select new
+                                  {
+                                      Title = pub.title,
+                                      Authors = from p in db.publications
+                                                from author in p.authors
+                                                where p.id == pub.id && p.authors.Count() != 0
+                                                select author.initials,
+                                      Sources = from p in db.publications
+                                                from source in p.sources
+                                                where p.id == pub.id && p.sources.Count() != 0
+                                                select source.item_title,
+                                      Year = pub.year
+                                  };
 
+                result = LINQResultToDataTable(queryUnique);
+                return result;
             }
             return null;
 

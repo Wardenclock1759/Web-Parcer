@@ -1,30 +1,53 @@
-﻿
+﻿@using System.Collections;
 @{
     ViewBag.Title = "Результат запроса";
 }
 
 <h2>Результат запроса:</h2>
-<table class="table table-bordered table-striped table-dark">
-    <thead>
-        <tr>
-            @foreach (System.Data.DataColumn drc in ViewBag.QueryResult.Columns)
-            {
-                <th scope="col">
-                    @drc.ToString()
-                </th>
-            }
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (System.Data.DataRow drr in ViewBag.QueryResult.Rows)
-        {
-            <tr>
-                @foreach (var item in drr.ItemArray)
+<div class="container-fluid">
+    @if (ViewBag.QueryResult != null)
+    {
+        <table class="table table-hover table-dark table-bordered">
+            <thead class="thead-dark">
+                <tr>
+                    @foreach (System.Data.DataColumn drc in ViewBag.QueryResult.Columns)
+                    {
+                        <th class="text-center" scope="col">
+                            <h3>@drc</h3>
+                        </th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (System.Data.DataRow drr in ViewBag.QueryResult.Rows)
                 {
-                    <td>@item</td>
+                    <tr>
+                        @foreach (var item in drr.ItemArray)
+                        {
+                            <td>
+                                @if (item is IEnumerable && !(item is string))
+                                {
+                                    IEnumerable enumerable = (item as IEnumerable);
+                                    if (enumerable != null)
+                                    {
+                                        foreach (var itemIn in enumerable)
+                                        {
+                                            <h5 class="text-center">@itemIn</h5>
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    <h5 class="text-center">@item</h5>
+                                }
+                            </td>
+                        }
+                    </tr>
                 }
-            </tr>
-        }
-    </tbody>
-</table>
+            </tbody>
+        </table>
+    }
+</div>
+
+
 
