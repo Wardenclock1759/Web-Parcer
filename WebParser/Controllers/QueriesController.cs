@@ -15,20 +15,12 @@ namespace WebParser.Controllers
 {
     public class QueriesController : Controller
     {
-        private SqlConnection connection;
         private System.Data.DataTable dataTable = new DataTable();
         u0979199_springer_dataEntities1 db = new u0979199_springer_dataEntities1();
-
-        private void EstablishConnection()
-        {
-            connection = new SqlConnection(@"Data Source=31.31.196.234;Initial Catalog=u0979199_springer_data;Persist Security Info=True;User ID=u0979199_spender;Password=LErwjfu4c9");
-            connection.Open();
-        }
 
         [HttpPost]
         public ActionResult GetParams(string yearCheck, string minYear, string maxYear, string sourceCheck, string source, string numCheck, string num, string wordCheck, string word, string chapterCheck, string articleCheck, string uniqueCheck)
         {
-            EstablishConnection();
             dataTable = GenerateQuery(yearCheck, minYear, maxYear, sourceCheck, source, numCheck, num, wordCheck, word, chapterCheck, articleCheck, uniqueCheck);
             if (dataTable != null)
             {
