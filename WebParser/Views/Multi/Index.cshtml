@@ -13,11 +13,7 @@
 <body>
     <div class="container-fluid">
         <div class="row justify-content-center">
-            <div class="col-md-3">
-                <a href="/Multi/Index" class="col-form-label">
-                    <h3 class="text-center mt-2">Автор -> Публикация</h3>
-                    <hr />
-                </a>
+            <div class="col-md-10">
                 @if (ViewData["messageType"] != null && ViewData["message"] != null)
                 {
                     <div class="alert alert-@ViewData["messageType"] alert-dismissible text-center">
@@ -25,6 +21,15 @@
                         <b>@ViewData["message"]</b>
                     </div>
                 }
+            </div>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-md-3">
+                <a href="/Multi/Index" class="col-form-label">
+                    <hr />
+                    <h3 class="text-center mt-2">Автор -> Публикация</h3>
+                    <hr />
+                </a>
                 <form action="CreateAP" method="post">
                     <select id="Author" name="Authors" class="custom-select">
                         <option selected value="Default">Выберите автора</option>
@@ -45,6 +50,7 @@
             </div>
             <div class="col-md-3">
                 <a href="/Multi/Index" class="col-form-label">
+                    <hr />
                     <h3 class="text-center mt-2">Публикация -> Источник</h3>
                     <hr />
                 </a>
@@ -70,6 +76,7 @@
         <div class="row justify-content-center">
             <div class="col-md-3">
                 <a href="/Multi/Index" class="col-form-label">
+                    <hr />
                     <h3 class="text-center mt-2">Публикация -> Ключевое слово</h3>
                     <hr />
                 </a>
@@ -83,7 +90,31 @@
                     </select>
                     <select id="Keywords" name="Keywords" class="custom-select">
                         <option selected value="Default">Выберите слово</option>
-                        @foreach (var item in ViewBag.source)
+                        @foreach (var item in ViewBag.keywords)
+                        {
+                            <option value="@item">@item</option>
+                        }
+                    </select>
+                    <input type="submit" class="btn btn-primary btn-block" value="Добавить" />
+                </form>
+            </div>
+            <div class="col-md-3">
+                <a href="/Multi/Index" class="col-form-label">
+                    <hr />
+                    <h3 class="text-center mt-2">Публикация -> Тип</h3>
+                    <hr />
+                </a>
+                <form action="CreatePT" method="post">
+                    <select id="Publications" name="Publications" class="custom-select">
+                        <option selected value="Default">Выберите публикацию</option>
+                        @foreach (var item in ViewBag.publications)
+                        {
+                            <option value="@item">@item</option>
+                        }
+                    </select>
+                    <select id="Type" name="Type" class="custom-select">
+                        <option selected value="Default">Выберите тип</option>
+                        @foreach (var item in ViewBag.type)
                         {
                             <option value="@item">@item</option>
                         }

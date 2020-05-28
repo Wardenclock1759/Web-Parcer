@@ -19,6 +19,11 @@ namespace WebParser.Controllers
         // GET: sources
         public ActionResult Index(string searchText, string message, int? i, bool update = false, int id = 0)
         {
+            if (searchText != null)
+            {
+                searchText = searchText.ToLower();
+            }
+            ViewData["Titlessss"] = "";
             string messageType = null;
             if (update && db.sources.Count((a) => a.id == id) == 1)
             {
@@ -27,7 +32,7 @@ namespace WebParser.Controllers
                 {
                     ViewData["Issue"] = targetSource.journal_issue;
                     ViewData["Volume"] = targetSource.journal_volume;
-                    ViewData["Title"] = targetSource.item_title;
+                    ViewData["Titlessss"] = targetSource.item_title;
                     ViewData["Update"] = update;
                     ViewData["Id"] = id;
                 }
@@ -42,7 +47,7 @@ namespace WebParser.Controllers
                 ViewData["messageType"] = messageType;
                 ViewData["message"] = message;
             }
-            return View((db.sources.Where(source => source.item_title.StartsWith(searchText) || searchText == null)).ToList().ToPagedList(i ?? 1, 10));
+            return View((db.sources.Where(source => source.item_title.ToLower().Contains(searchText) || searchText == null)).OrderBy(x => x.item_title).ToList().ToPagedList(i ?? 1, 10));
         }
 
         [HttpPost]

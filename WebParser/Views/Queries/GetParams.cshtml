@@ -1,53 +1,96 @@
 ﻿@using System.Collections;
+@using OfficeOpenXml;
 @{
     ViewBag.Title = "Результат запроса";
 }
 
-<h2>Результат запроса:</h2>
-<div class="container-fluid">
-    @if (ViewBag.QueryResult != null)
-    {
-        <table class="table table-hover table-dark table-bordered">
-            <thead class="thead-dark">
-                <tr>
-                    @foreach (System.Data.DataColumn drc in ViewBag.QueryResult.Columns)
-                    {
-                        <th class="text-center" scope="col">
-                            <h3>@drc</h3>
-                        </th>
-                    }
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (System.Data.DataRow drr in ViewBag.QueryResult.Rows)
+    <body>
+        <div class="container-fluid">
+            <h3 class="text-center text-info">Результат запроса:</h3>
+            <form method="post" action="" name="mainForm">
+                @if (ViewBag.QueryResult != null)
                 {
-                    <tr>
-                        @foreach (var item in drr.ItemArray)
-                        {
-                            <td>
-                                @if (item is IEnumerable && !(item is string))
+                    <button class="btn btn-secondary btn-warning" onclick="fnExcelReport()">В excel</button>
+                    <table class="table table-hover table-dark table-bordered table-responsive-md" id="mainTable" name="mainTable">
+                        <thead class="thead-dark">
+                            <tr>
+                                @foreach (System.Data.DataColumn drc in ViewBag.QueryResult.Columns)
                                 {
-                                    IEnumerable enumerable = (item as IEnumerable);
-                                    if (enumerable != null)
+                                    <th class="text-center" scope="col">
+                                        <h3>@drc</h3>
+                                    </th>
+                                }
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (System.Data.DataRow drr in ViewBag.QueryResult.Rows)
+                            {
+                                <tr>
+                                    @foreach (var item in drr.ItemArray)
                                     {
-                                        foreach (var itemIn in enumerable)
-                                        {
-                                            <h5 class="text-center">@itemIn</h5>
-                                        }
+                                        <td>
+                                            @if (item is IEnumerable && !(item is string))
+                                            {
+                                                IEnumerable enumerable = (item as IEnumerable);
+                                                if (enumerable != null)
+                                                {
+                                                    foreach (var itemIn in enumerable)
+                                                    {
+                                                        <h5 class="text-center">@itemIn</h5>
+                                                    }
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <h5 class="text-center">@item</h5>
+                                            }
+                                        </td>
                                     }
-                                }
-                                else
-                                {
-                                    <h5 class="text-center">@item</h5>
-                                }
-                            </td>
-                        }
-                    </tr>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
                 }
-            </tbody>
-        </table>
-    }
-</div>
+            </form>
+
+        </div>
+    </body>
+
+
+@section scripts{
+    <script>
+        function fnExcelReport() {
+            var tab_text = "<table border='5px'><tr bgcolor='#87AFC6'>";
+            var textRange; var j = 0;
+            tab = document.getElementById('mainTable');
+
+            for (j = 0; j < tab.rows.length; j++) {
+                tab_text = tab_text + tab.rows[j].innerHTML + "</tr>";
+            }
+
+            tab_text = tab_text + "</table>";
+            tab_text = tab_text.replace(/<A[^>]*>|<\/A>/g, "");
+            tab_text = tab_text.replace(/<img[^>]*>/gi, "");
+            tab_text = tab_text.replace(/<input[^>]*>|<\/input>/gi, "");
+
+            var ua = window.navigator.userAgent;
+            var msie = ua.indexOf("MSIE ");
+
+            if (msie > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./)) {
+                txtArea1.document.open("txt/html", "replace");
+                txtArea1.document.write(tab_text);
+                txtArea1.document.close();
+                txtArea1.focus();
+                sa = txtArea1.document.execCommand("SaveAs", true, "Say Thanks to Sumit.xls");
+            }
+            else
+                sa = window.open('data:application/vnd.ms-excel,' + encodeURIComponent(tab_text));
+
+            return (sa);
+        }
+    </script>
+    
+}
 
 
 

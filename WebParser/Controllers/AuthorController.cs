@@ -12,6 +12,9 @@ using PagedList;
 using System.Data.SqlClient;
 using System.Runtime.CompilerServices;
 using System.Web.UI.WebControls;
+using OfficeOpenXml;
+using System.Drawing;
+using OfficeOpenXml.Style;
 
 namespace WebParser.Controllers
 {
@@ -23,6 +26,10 @@ namespace WebParser.Controllers
         [HttpGet]
         public ActionResult Index(string searchText, string message, int? i, bool update = false, int id = 0)
         {
+            if (searchText != null)
+            {
+                searchText = searchText.ToLower();
+            }
             string messageType = null;
             if (update && db.authors.Count((a) => a.id == id) == 1)
             {
@@ -44,7 +51,7 @@ namespace WebParser.Controllers
                 ViewData["messageType"] = messageType;
                 ViewData["message"] = message;
             }
-            return View((db.authors.Where(author => author.initials.StartsWith(searchText) || searchText == null)).ToList().ToPagedList(i ?? 1, 10));
+            return View((db.authors.Where(author => author.initials.ToLower().Contains(searchText) || searchText == null)).OrderBy(x => x.initials).ToList().ToPagedList(i ?? 1, 10));
         }
 
         [HttpPost]
@@ -121,6 +128,34 @@ namespace WebParser.Controllers
                 db.Dispose();
             }
             base.Dispose(disposing);
+        }
+
+        public void Export()
+        {
+            var authors = db.authors.OrderBy(x => x.initials);
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+            ExcelPackage Ep = new ExcelPackage();
+            ExcelWorksheet Sheet = Ep.Workbook.Worksheets.Add("Report");
+            Sheet.Cells["A1"].Value = "Номер";
+            Sheet.Cells["B1"].Value = "Полное имя";
+            int row = 2;
+            foreach (var item in authors)
+            {
+                Sheet.Cells[string.Format("A{0}", row)].Value = item.id;
+                Sheet.Cells[string.Format("B{0}", row)].Value = item.initials;
+                row++;
+            }
+            Sheet.Cells["A:AZ"].AutoFitColumns();
+            var cellFont = Sheet.Cells["A:AZ"].Style.Font;
+            cellFont.SetFromFont(new Font("Times New Roman", 12));
+            cellFont.Bold = true;
+            Sheet.Cells["A:AZ"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+
+            Response.Clear();
+            Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+            Response.AddHeader("content-disposition", "attachment: filename=" + "Report.xlsx");
+            Response.BinaryWrite(Ep.GetAsByteArray());
+            Response.End();
         }
     }
 }

@@ -20,7 +20,10 @@ namespace WebParser.Controllers
         [HttpGet]
         public ActionResult Index(string searchText, string message, int? i, bool update = false, int id = 0)
         {
-
+            if (searchText != null)
+            {
+                searchText = searchText.ToLower();
+            }
             string messageType = null;
             if (update && db.keywords.Count((a) => a.id == id) == 1)
             {
@@ -42,7 +45,7 @@ namespace WebParser.Controllers
                 ViewData["messageType"] = messageType;
                 ViewData["message"] = message;
             }
-            return View((db.keywords.Where(word => word.keyword.StartsWith(searchText) || searchText == null)).ToList().ToPagedList(i ?? 1, 10));
+            return View((db.keywords.Where(word => word.keyword.ToLower().Contains(searchText) || searchText == null)).OrderBy(x => x.keyword).ToList().ToPagedList(i ?? 1, 10));
         }
 
         [HttpPost]

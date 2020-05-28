@@ -20,13 +20,18 @@ namespace WebParser.Controllers
         [HttpGet]
         public ActionResult Index(string searchText, string message, int? i, bool update = false, int id = 0)
         {
+            if (searchText != null)
+            {
+                searchText = searchText.ToLower();
+            }
+            ViewData["Titlesss"] = "";
             string messageType = null;
             if (update && db.publications.Count((a) => a.id == id) == 1)
             {
                 publications targetPublication = db.publications.Find(id);
                 if (targetPublication != null)
                 {
-                    ViewData["Title"] = targetPublication.title;
+                    ViewData["Titlesss"] = targetPublication.title;
                     ViewData["Year"] = targetPublication.year;
                     ViewData["Update"] = update;
                     ViewData["Id"] = id;
@@ -42,7 +47,7 @@ namespace WebParser.Controllers
                 ViewData["messageType"] = messageType;
                 ViewData["message"] = message;
             }
-            return View((db.publications.Where(publications => publications.title.StartsWith(searchText) || searchText == null)).ToList().ToPagedList(i ?? 1, 10));
+            return View((db.publications.Where(publications => publications.title.ToLower().Contains(searchText) || searchText == null)).OrderBy(x => x.title).ToList().ToPagedList(i ?? 1, 10));
         }
 
         [HttpPost]

@@ -29,7 +29,7 @@
         </div>
         <div class="row">
             <div class="col-md-3">
-                @if (ViewData["Update"] != null && ViewData["Title"] != null)
+                @if (ViewData["Update"] != null && ViewData["Titlessss"] != null)
                 {
                     <h3 class="text-center text-info">
                         Изменить Источник
@@ -44,7 +44,7 @@
                 <form action="" method="post" class="needs-validation" name="main" novalidate>
                     <div class="form-group">
                         <div class="form-group">
-                            <input type="text" name="titleInput" class="form-control" placeholder="Заголовок" value="@ViewData["Title"]" maxlength="200" required />
+                            <input type="text" name="titleInput" class="form-control" placeholder="Заголовок" value="@ViewData["Titlessss"]" maxlength="200" required />
                             <div class="invalid-feedback">
                                 Менее 200 символов
                             </div>
@@ -61,7 +61,7 @@
                                 Введите значение от 0 до 9999
                             </div>
                         </div>
-                        @if (ViewData["Update"] != null && ViewData["Title"] != null)
+                        @if (ViewData["Update"] != null && ViewData["Titlessss"] != null)
                         {
                             <input type="submit" name="editSource" class="btn btn-success btn-block" value="Изменить" formaction="@Url.Action("Update", "Sources", new { sourceInput = Request.QueryString["titleInput"], idInput = ViewData["Id"], issue = Request.QueryString["issueInput"], volume = Request.QueryString["volumeInput"]})" />
                         }
@@ -82,7 +82,7 @@
             </div>
             <div class="col-md-8">
                 <h3 class="text-center text-info">Записи в базе данных</h3>
-                <table class="table table-hover table-dark table-bordered">
+                <table class="table table-hover table-dark table-bordered table-responsive-md">
                     <thead class="thead-dark">
                         <tr>
                             <th class="text-center">
