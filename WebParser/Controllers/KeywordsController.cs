@@ -58,7 +58,7 @@ namespace WebParser.Controllers
                 newWord.keyword = keywordInput;
                 db.keywords.Add(newWord);
                 db.SaveChanges();
-                localMessage = $"Запись {keywordInput} успешна добавлена.";
+                localMessage = $"Запись {keywordInput} успешно добавлена.";
             }
             return RedirectToAction("/Index", new { i = 1, message = localMessage });
         }
@@ -85,7 +85,7 @@ namespace WebParser.Controllers
             if (ModelState.IsValid && db.keywords.Count((a) => a.id == idInput) == 1 && db.keywords.Count((a) => a.keyword == keywordInput) == 0)
             {
                 keywords targetWord = db.keywords.Find(idInput);
-                localMessage = $"Запись {targetWord.keyword} успешна изменена на {keywordInput}.";
+                localMessage = $"Запись {targetWord.keyword} успешно изменена на {keywordInput}.";
                 targetWord.keyword = keywordInput;
                 db.Entry(targetWord).State = EntityState.Modified;
                 db.SaveChanges();

@@ -63,7 +63,7 @@ namespace WebParser.Controllers
                 }
                 db.sources.Add(newSource);
                 db.SaveChanges();
-                localMessage = $"Запись {titleInput} успешна добавлена.";
+                localMessage = $"Запись {titleInput} успешно добавлена.";
             }
             return RedirectToAction("/Index", new { i = 1, message = localMessage });
         }

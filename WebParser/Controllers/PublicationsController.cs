@@ -59,7 +59,7 @@ namespace WebParser.Controllers
                 newPublication.year = Convert.ToInt16(yearInput);
                 db.publications.Add(newPublication);
                 db.SaveChanges();
-                localMessage = $"Запись {titleInput} успешна добавлена.";
+                localMessage = $"Запись {titleInput} успешно добавлена.";
             }
             return RedirectToAction("/Index", new { i = 1, message = localMessage });
         }
@@ -86,7 +86,7 @@ namespace WebParser.Controllers
             if (ModelState.IsValid && db.publications.Count((a) => a.id == idInput) == 1 && db.publications.Count((a) => (a.title == titleInput) && (a.year == yearInput)) == 0)
             {
                 publications targetPublication = db.publications.Find(idInput);
-                localMessage = $"Запись {targetPublication.title} успешна изменена на {titleInput}.";
+                localMessage = $"Запись {targetPublication.title} успешно изменена на {titleInput}.";
                 targetPublication.title = titleInput;
                 db.Entry(targetPublication).State = EntityState.Modified;
                 db.SaveChanges();

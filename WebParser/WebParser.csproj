@@ -150,6 +150,7 @@
     <Compile Include="Controllers\AuthorController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\KeywordsController.cs" />
+    <Compile Include="Controllers\MultiController.cs" />
     <Compile Include="Controllers\PublicationsController.cs" />
     <Compile Include="Controllers\QueriesController.cs" />
     <Compile Include="Controllers\sourcesController.cs" />
@@ -448,6 +449,7 @@
     <Content Include="Views\Queries\GetParams.cshtml" />
     <Content Include="Views\Sources\Index.cshtml" />
     <Content Include="Views\Publications\Index.cshtml" />
+    <Content Include="Views\Multi\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\" />

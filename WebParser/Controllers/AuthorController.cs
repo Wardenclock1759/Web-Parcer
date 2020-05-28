@@ -60,7 +60,7 @@ namespace WebParser.Controllers
                 newAuthor.initials = authorInput;
                 db.authors.Add(newAuthor);
                 db.SaveChanges();
-                localMessage = $"Запись {authorInput} успешна добавлена.";
+                localMessage = $"Запись {authorInput} успешно добавлена.";
             }
             return RedirectToAction("/Index", new { i = 1, message = localMessage });
         }
@@ -87,7 +87,7 @@ namespace WebParser.Controllers
             if (ModelState.IsValid && db.authors.Count((a) => a.id == idInput) == 1 && db.authors.Count((a) => a.initials == authorInput) == 0)
             {
                 authors targetAuthor = db.authors.Find(idInput);
-                localMessage = $"Запись {targetAuthor.initials} успешна изменена на {authorInput}.";
+                localMessage = $"Запись {targetAuthor.initials} успешно изменена на {authorInput}.";
                 targetAuthor.initials = authorInput;
                 db.Entry(targetAuthor).State = EntityState.Modified;
                 db.SaveChanges();
