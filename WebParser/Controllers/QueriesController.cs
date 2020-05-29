@@ -40,26 +40,6 @@ namespace WebParser.Controllers
         }
 
 
-        [HttpPost]
-        public ActionResult Excel(System.Data.DataColumn mainTable)
-        {
-            string html = "";
-            DataTable table = ConvertHTMLTablesToDataTable(html);
-            var stream = new MemoryStream();
-            //using (var package = new ExcelPackage(stream))
-            //{
-            //    var workSheet = package.Workbook.Worksheets.Add("Sheet1");
-            //    workSheet.Cells.LoadFromCollection<string>(table, true);
-            //    package.Save();
-            //}
-            //stream.Position = 0;
-
-            //string excelName = $"BusinessUnits-{DateTime.Now.ToString("yyyyMMddHHmmssfff")}.xlsx";
-            //// above I define the name of the file using the current datetime.
-
-            return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "1"); // this will be the actual export.
-        }
-
         private DataTable GenerateQuery(string cbYear, string tbMinYear, string tbMaxYear, string cbSource, string tbSource, string cbAuthorsNumber, string num, string cbKeywords, string tbKeywords, string cbChapter, string cbArticle, string cbUnique)
         {
             DataTable result = new DataTable();

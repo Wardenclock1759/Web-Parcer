@@ -153,7 +153,7 @@ namespace WebParser.Controllers
 
             Response.Clear();
             Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-            Response.AddHeader("content-disposition", "attachment: filename=" + "Report.xlsx");
+            Response.AddHeader("content-disposition", "attachment: filename=" + "Авторы.xlsx");
             Response.BinaryWrite(Ep.GetAsByteArray());
             Response.End();
         }

@@ -9,6 +9,9 @@ using System.Web.Mvc;
 using WebParser;
 using PagedList.Mvc;
 using PagedList;
+using OfficeOpenXml;
+using System.Drawing;
+using OfficeOpenXml.Style;
 
 namespace WebParser.Controllers
 {
@@ -122,6 +125,34 @@ namespace WebParser.Controllers
                 db.Dispose();
             }
             base.Dispose(disposing);
+        }
+
+        public void Export()
+        {
+            var keywords = db.keywords.OrderBy(x => x.keyword);
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+            ExcelPackage Ep = new ExcelPackage();
+            ExcelWorksheet Sheet = Ep.Workbook.Worksheets.Add("Report");
+            Sheet.Cells["A1"].Value = "Номер";
+            Sheet.Cells["B1"].Value = "Слово";
+            int row = 2;
+            foreach (var item in keywords)
+            {
+                Sheet.Cells[string.Format("A{0}", row)].Value = item.id;
+                Sheet.Cells[string.Format("B{0}", row)].Value = item.keyword;
+                row++;
+            }
+            Sheet.Cells["A:AZ"].AutoFitColumns();
+            var cellFont = Sheet.Cells["A:AZ"].Style.Font;
+            cellFont.SetFromFont(new Font("Times New Roman", 12));
+            cellFont.Bold = true;
+            Sheet.Cells["A:AZ"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+
+            Response.Clear();
+            Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+            Response.AddHeader("content-disposition", "attachment: filename=" + "Ключевые слова.xlsx");
+            Response.BinaryWrite(Ep.GetAsByteArray());
+            Response.End();
         }
     }
 }
