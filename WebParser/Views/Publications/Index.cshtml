@@ -3,6 +3,7 @@
 
 @using PagedList.Mvc;
 @using PagedList;
+@using System.Collections;
 @{
     ViewBag.Title = "Публикации";
 }
@@ -51,10 +52,54 @@
                             </div>
                         </div>
                         <div class="form-group">
+                            <input type="number" name="volumeInput" class="form-control" placeholder="Номер серии" value="@ViewData["Volume"]" min="0" max="9999" maxlength="4" />
+                            <div class="invalid-feedback">
+                                Введите значение от 0 до 9999
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <input type="number" name="issueInput" class="form-control" placeholder="Номер выпуска" value="@ViewData["Issue"]" min="0" max="9999" maxlength="4" />
+                            <div class="invalid-feedback">
+                                Введите значение от 0 до 9999
+                            </div>
+                        </div>
+                        <div class="form-group">
                             <input type="number" name="yearInput" class="form-control" placeholder="Год издания" value="@ViewData["Year"]" min="1900" max="2020" maxlength="4" required />
                             <div class="invalid-feedback">
                                 Значение должно быть между 1900 и 2020 годами.
                             </div>
+                        </div>
+                        <div class="form-group">
+                            <select id="Author" name="Authors[]" class="custom-select form-control" multiple>
+                                <option selected value="Default">Выберите авторов</option>
+                                @foreach (var item in ViewBag.authors)
+                                {
+                                    <option value="@item">@item</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" name="Words" class="form-control" placeholder="Ключевые слова (через ,)" value="" maxlength="60" required />
+                            <div class="invalid-feedback">
+                                Введите менее 60 символов
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <select id="Source" name="Source" class="custom-select form-control">
+                                <option selected value="Default">Выберите источник</option>
+                                @foreach (var item in ViewBag.source)
+                                {
+                                    <option value="@item">@item</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <select id="Type" name="Type" class="custom-select form-control">
+                                @foreach (var item in ViewBag.type)
+                                {
+                                    <option value="@item">@item</option>
+                                }
+                            </select>
                         </div>
                         @if (ViewData["Update"] != null && ViewData["Titlesss"] != null)
                         {
@@ -66,18 +111,82 @@
                         }
                     </div>
                 </form>
-                <form action="Index">
-                    <div class="form-group">
-                        <input class="form-control mr-lg-3" name="searchText" type="search" placeholder="Поиск по публикации" aria-label="Search">
-                    </div>
-                    <div class="form-group">
-                        <button class="btn btn-warning btn-block" type="submit">Найти</button>
-                    </div>
-                </form>
-                <a class="btn btn-success btn-block" href="@Url.Action("Export", "Publications")">Экспорт в Excel</a>
+                <a class="btn btn-success btn-block" href="@Url.Action("Export", "Publications", new { searchText = Request.QueryString["searchText"], minYear = Request.QueryString["minYear"], auNum = Request.QueryString["auNum"] })">Экспорт в Excel</a>
             </div>
             <div class="col-md-8">
                 <h3 class="text-center text-info">Записи в базе данных</h3>
+                <button type="button" class="collapsible">Фильтр</button>
+                <div class="content">
+                    <div class="container-fluid">
+                        <form action="@Url.Action("", "Publications/", new { i = 1, searchText = Request.QueryString["searchText"] })" method="get" class="needs-validation" novalidate>
+                            <div class="form-row">
+                                <div class="form-group col-md-4">
+                                    <input class="form-control mr-lg-3" name="searchText" type="search" placeholder="Поиск по публикации" maxlength="50" aria-label="Search">
+                                    <div class="invalid-feedback">
+                                        Текст должен быть не больше 50 символов.
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-4">
+                                    <input type="number" class="form-control" id="minYear" name="minYear" min="1900" max="2020" maxlength="4" placeholder="Год">
+                                    <div class="invalid-feedback">
+                                        Значение должно быть между 1900 и 2020 годами.
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-4">
+                                    <input type="number" class="form-control" id="auNum" name="auNum" min="1" max="20" placeholder="Введите количество авторов">
+                                    <div class="invalid-feedback">
+                                        Количество не должно превышать 20.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <button type="submit" class="btn btn-success btn-lg btn-block">Подтвердить</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                @if (ViewBag.QueryResult != null)
+                {
+                    <table class="table table-hover table-dark table-bordered table-responsive-md" id="mainTable" name="mainTable">
+                        <thead class="thead-dark">
+                            <tr>
+                                @foreach (System.Data.DataColumn drc in ViewBag.QueryResult.Columns)
+                                {
+                                    <th class="text-center" scope="col">
+                                        <h3>@drc</h3>
+                                    </th>
+                                }
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (System.Data.DataRow drr in ViewBag.QueryResult.Rows)
+                            {
+                                <tr>
+                                    @foreach (var item in drr.ItemArray)
+                                    {
+                                        <td>
+                                            @if (item is IEnumerable && !(item is string))
+                                            {
+                                                IEnumerable enumerable = (item as IEnumerable);
+                                                if (enumerable != null)
+                                                {
+                                                    foreach (var itemIn in enumerable)
+                                                    {
+                                                        <h5 class="text-center">@itemIn</h5>
+                                                    }
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <h5 class="text-center">@item</h5>
+                                            }
+                                        </td>
+                                    }
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
                 <table class="table table-hover table-dark table-bordered table-responsive-md">
                     <thead class="thead-dark">
                         <tr>
@@ -105,10 +214,10 @@
                                 <td>
                                     <div class="row">
                                         <div class="col">
-                                            <button href="#" onclick="location.href='@Url.Action("Edit", "Publications", new {id = item.id})'" class="btn btn-warning btn-block btn-sm">Изменить</button>
+                                            <button href="#" onclick="location.href='@Url.Action("Edit", "Publications", new {id = item.id})'" class="btn btn-warning btn-sm btn-block">Изменить/Посмотреть</button>
                                         </div>
                                         <div class="col">
-                                            <button href="#" onclick="location.href='@Url.Action("Delete", "Publications", new {id = item.id})'" class="btn btn-danger btn-block btn-sm">Удалить</button>
+                                            <button href="#" onclick="location.href='@Url.Action("Delete", "Publications", new {id = item.id})'" class="btn btn-danger btn-sm btn-block" style="height:100%;">Удалить</button>
                                         </div>
                                     </div>
                                 </td>
@@ -117,7 +226,7 @@
                     </tbody>
                 </table>
 
-                @Html.PagedListPager(Model, i => Url.Action("", "Publications/", new { i, searchText = Request.QueryString["searchText"] }))
+                @Html.PagedListPager(Model, i => Url.Action("", "Publications/", new { i, searchText = Request.QueryString["searchText"], minYear = Request.QueryString["minYear"], auNum = Request.QueryString["auNum"] }))
 
             </div>
         </div>
@@ -135,6 +244,21 @@
             }
             form.classList.add('was-validated');
         })
+
+        var coll = document.getElementsByClassName("collapsible");
+        var i;
+
+        for (i = 0; i < coll.length; i++) {
+            coll[i].addEventListener("click", function () {
+                this.classList.toggle("active");
+                var content = this.nextElementSibling;
+                if (content.style.display === "block") {
+                    content.style.display = "none";
+                } else {
+                    content.style.display = "block";
+                }
+            });
+        }
     </script>
 
 

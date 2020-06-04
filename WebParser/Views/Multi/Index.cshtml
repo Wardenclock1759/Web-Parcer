@@ -38,7 +38,7 @@
                             <option value="@item">@item</option>
                         }
                     </select>
-                    <select id="Publications" name="Publications" class="custom-select">
+                    <select id="Publications" name="Publications[]" class="custom-select" multiple>
                         <option selected value="Default">Выберите публикацию</option>
                         @foreach (var item in ViewBag.publications)
                         {

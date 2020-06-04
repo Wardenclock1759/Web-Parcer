@@ -54,24 +54,26 @@ namespace WebParser.Controllers
         }
 
         [HttpPost]
-        public ActionResult Create(string titleInput, int issueInput, int volumeInput)
+        public ActionResult Create(string titleInput)
         {
             string localMessage = "Произошла ошибка или запись уже есть.";
-            if (ModelState.IsValid && db.sources.Count((a) => a.item_title == titleInput) == 0)
+            try
             {
-                int current_id = db.sources.Count();
-                while (db.sources.Count((a) => a.id == current_id) == 1) { current_id++; }
-                sources newSource = new sources();
-                newSource.id = current_id;
-                newSource.item_title = titleInput;
-                if (issueInput != 0 && volumeInput != 0)
+                if (ModelState.IsValid && db.sources.Count((a) => a.item_title == titleInput) == 0)
                 {
-                    newSource.journal_issue = issueInput;
-                    newSource.journal_volume = volumeInput;
+                    int current_id = db.sources.Count();
+                    while (db.sources.Count((a) => a.id == current_id) == 1) { current_id++; }
+                    sources newSource = new sources();
+                    newSource.id = current_id;
+                    newSource.item_title = titleInput;
+                    db.sources.Add(newSource);
+                    db.SaveChanges();
+                    localMessage = $"Запись {titleInput} успешно добавлена.";
                 }
-                db.sources.Add(newSource);
-                db.SaveChanges();
-                localMessage = $"Запись {titleInput} успешно добавлена.";
+            }
+            catch
+            {
+
             }
             return RedirectToAction("/Index", new { i = 1, message = localMessage });
         }
@@ -92,18 +94,23 @@ namespace WebParser.Controllers
         }
 
         [HttpPost]
-        public ActionResult Update(string titleInput, int idInput, int issueInput, int volumeInput)
+        public ActionResult Update(string titleInput, int idInput)
         {
             string localMessage = "Произошла непредвиденная ошибка или такой источник уже есть.";
-            if (ModelState.IsValid && db.sources.Count((a) => a.id == idInput) == 1 && db.sources.Count((a) => (a.item_title == titleInput) && (a.journal_issue == issueInput) && (a.journal_volume == volumeInput)) == 0)
+            try
             {
-                sources targetSource = db.sources.Find(idInput);
-                localMessage = $"Запись {targetSource.item_title}; {targetSource.journal_volume}; {targetSource.journal_issue}; успешна изменена на {titleInput}; {volumeInput}; {issueInput}.";
-                targetSource.item_title = titleInput;
-                targetSource.journal_issue = issueInput;
-                targetSource.journal_volume = volumeInput;
-                db.Entry(targetSource).State = EntityState.Modified;
-                db.SaveChanges();
+                if (ModelState.IsValid && db.sources.Count((a) => a.id == idInput) == 1 && db.sources.Count((a) => (a.item_title == titleInput)) == 0)
+                {
+                    sources targetSource = db.sources.Find(idInput);
+                    localMessage = $"Запись {targetSource.item_title}; успешна изменена на {titleInput}.";
+                    targetSource.item_title = titleInput;
+                    db.Entry(targetSource).State = EntityState.Modified;
+                    db.SaveChanges();
+                }
+            }
+            catch
+            {
+
             }
             return RedirectToAction("/Index", new { i = 1, message = localMessage });
         }
@@ -112,16 +119,23 @@ namespace WebParser.Controllers
         public ActionResult Delete(int? id)
         {
             string localMessage = null;
-            if (id != null)
+            try
             {
-                sources targetSource = db.sources.Find(id);
-                if (targetSource != null)
+                if (id != null)
                 {
-                    db.sources.Remove(targetSource);
-                    db.SaveChanges();
-                    localMessage = $"Запись {targetSource.item_title} была успешно удалена.";
-                    return RedirectToAction("/Index", new { i = 1, message = localMessage });
+                    sources targetSource = db.sources.Find(id);
+                    if (targetSource != null)
+                    {
+                        db.sources.Remove(targetSource);
+                        db.SaveChanges();
+                        localMessage = $"Запись {targetSource.item_title} была успешно удалена.";
+                        return RedirectToAction("/Index", new { i = 1, message = localMessage });
+                    }
                 }
+            }
+            catch
+            {
+
             }
             localMessage = "Произошла непредвиденная ошибка.";
             return RedirectToAction("/Index", new { i = 1, message = localMessage });

@@ -66,6 +66,10 @@ will truncate terms that are too long to fit in the left column
     vertical-align: middle;
     border-bottom: 2px solid rgba(0, 0, 0, 0.15);
 }
+table {
+    table-layout: auto;
+    width: 100%;
+}
 
 td {
     display: table-cell;
@@ -87,6 +91,9 @@ label {
     padding: 10px;
     margin: 0 0 10px;
     display: block;
+    text-align: center;
+    background: #ccc;
+    color: #000000;
 }
 
     label:hover {
@@ -94,13 +101,34 @@ label {
         cursor: pointer;
     }
 
-body {
-    margin: 0;
-    font-family: "Lato", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-    font-size: 1rem;
-    font-weight: 400;
+.btn-sm, .btn-group-sm > .btn {
+    padding: 0rem 0rem;
+    font-size: 0.875rem;
     line-height: 1.5;
-    color: #fff;
-    text-align: center;
-    background-color: #2B3E50;
+    border-radius: 0px;
+}
+
+.collapsible {
+    background-color: #eee;
+    color: #444;
+    cursor: pointer;
+    padding: 18px;
+    width: 100%;
+    border: none;
+    text-align: left;
+    outline: none;
+    font-size: 15px;
+}
+
+    /* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
+    .active, .collapsible:hover {
+        background-color: #ccc;
+    }
+
+/* Style the collapsible content. Note: hidden by default */
+.content {
+    padding: 0 18px;
+    display: none;
+    overflow: hidden;
+    background-color: #4E5D6C;
 }

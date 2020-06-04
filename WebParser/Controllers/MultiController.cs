@@ -58,12 +58,12 @@ namespace WebParser.Controllers
         }
 
         [HttpPost]
-        public ActionResult CreateAP(string Authors, string Publications)
+        public ActionResult CreateAP(string Authors, string[] Publications)
         {
             string localMessage = "Произошла ошибка или запись уже есть.";
-
+            string Publications2 = Publications[0];
             authors a = db.authors.Where(x => x.initials == Authors).FirstOrDefault();
-            publications p = db.publications.Where(x => x.title == Publications).FirstOrDefault();
+            publications p = db.publications.Where(x => x.title == Publications2).FirstOrDefault();
             if (a != null && p != null && !p.authors.Contains(a))
             {
                 a.publications.Add(p);
