@@ -4,57 +4,59 @@
     ViewBag.Title = "Результат запроса";
 }
 
-    <body>
-        <div class="container-fluid">
-            <h3 class="text-center text-info">Результат запроса:</h3>
-            <form method="post" action="" name="mainForm">
-                @if (ViewBag.QueryResult != null)
-                {
+<body>
+    <div class="container-fluid">
+        <h3 class="text-center text-info">Результат запроса:</h3>
+        <form method="post" action="" name="mainForm">
+            @if (ViewBag.QueryResult != null)
+            {
+                <div class="row justify-content-center">
                     <button class="btn btn-secondary btn-warning" onclick="fnExcelReport()">В excel</button>
-                    <table class="table table-hover table-dark table-bordered table-responsive-md" id="mainTable" name="mainTable">
-                        <thead class="thead-dark">
-                            <tr>
-                                @foreach (System.Data.DataColumn drc in ViewBag.QueryResult.Columns)
-                                {
-                                    <th class="text-center" scope="col">
-                                        <h3>@drc</h3>
-                                    </th>
-                                }
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (System.Data.DataRow drr in ViewBag.QueryResult.Rows)
+                </div>
+                <table class="table table-hover table-dark table-bordered table-responsive-md" id="mainTable" name="mainTable">
+                    <thead class="thead-dark">
+                        <tr>
+                            @foreach (System.Data.DataColumn drc in ViewBag.QueryResult.Columns)
                             {
-                                <tr>
-                                    @foreach (var item in drr.ItemArray)
-                                    {
-                                        <td>
-                                            @if (item is IEnumerable && !(item is string))
+                                <th class="text-center" scope="col">
+                                    <h3>@drc</h3>
+                                </th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (System.Data.DataRow drr in ViewBag.QueryResult.Rows)
+                        {
+                            <tr>
+                                @foreach (var item in drr.ItemArray)
+                                {
+                                    <td>
+                                        @if (item is IEnumerable && !(item is string))
+                                        {
+                                            IEnumerable enumerable = (item as IEnumerable);
+                                            if (enumerable != null)
                                             {
-                                                IEnumerable enumerable = (item as IEnumerable);
-                                                if (enumerable != null)
+                                                foreach (var itemIn in enumerable)
                                                 {
-                                                    foreach (var itemIn in enumerable)
-                                                    {
-                                                        <h5 class="text-center">@itemIn</h5>
-                                                    }
+                                                    <h5 class="text-center">@itemIn</h5>
                                                 }
                                             }
-                                            else
-                                            {
-                                                <h5 class="text-center">@item</h5>
-                                            }
-                                        </td>
-                                    }
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                }
-            </form>
+                                        }
+                                        else
+                                        {
+                                            <h5 class="text-center">@item</h5>
+                                        }
+                                    </td>
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </form>
 
-        </div>
-    </body>
+    </div>
+</body>
 
 
 @section scripts{
@@ -89,7 +91,7 @@
             return (sa);
         }
     </script>
-    
+
 }
 
 
